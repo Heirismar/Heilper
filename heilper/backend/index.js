@@ -21,6 +21,23 @@ con.connect((err)=>{
 
 //Rutas
 
+// Ruta de login
+app.post('/login', (req, res) => {
+  const { correo, password } = req.body;
+
+  const sql = 'SELECT * FROM usuario WHERE correo =? AND password =?';
+  con.query(sql, [correo, password], (err, results) => {
+    if (err) return res.status(500).send({ success: false, error: err.message });
+
+    if (results.length > 0) {
+      res.send({ success: true, correo: results[0].correo });
+    } else {
+      res.send({ success: false, message: 'Credenciales incorrectas' });
+    }
+  });
+});
+
+
 //CONTACTO
 app.get("/contacto", (req, res) => {
     const sql =" select * from contacto";

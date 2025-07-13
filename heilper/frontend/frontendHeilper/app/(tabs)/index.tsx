@@ -1,12 +1,29 @@
 import { Image } from 'expo-image';
 import { Platform, StyleSheet } from 'react-native';
-
+import React, { useContext, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthContext } from '@/app/AuthContext';  
 import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import ParallaxScrollView  from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
+type RootStackParamList = {
+  login: undefined;
+  // add other routes here if needed
+};
 export default function HomeScreen() {
+  const { correoUsuario } = useContext(AuthContext);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  useEffect(() => {
+    if (!correoUsuario) {
+      // Si correoUsuario es null, vacío o falso, navega al Login
+      navigation.navigate('login');
+    }
+  }, [correoUsuario, navigation]);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
