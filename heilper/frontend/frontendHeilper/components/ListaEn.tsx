@@ -1,42 +1,37 @@
-
 import React, { useEffect, useState, useContext} from 'react';
 import { useRouter } from 'expo-router';
 import { AuthContext } from '@/app/AuthContext';
 import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity,TextInput, Button, Modal, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Hbuttom from './ui/Hbuttom';
 
 type Data = {
-    cod: number;
+    codUE: number;
     nombre: string;
-    apellido: string;
-    tlf: string;
-    usuario: string;
 };
 
-const Lista = () => {
+const ListaEn = () => {
   const router = useRouter();
   const { correoUsuario } =useContext(AuthContext);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState<Data[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [cod, setCod] = useState<number | null>(null);
+  const [codUE, setCodUE] = useState<number | null>(null);
   const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
-  const [tlf, setTlf] = useState('');
+
 
   const enviarFormulario = () => {
-    if (cod !== null) {
+    if (codUE !== null) {
       // Editar contacto existente
-      fetch(`http://192.168.0.108:7000/contacto/${cod}`, {
+      fetch(`http://192.168.0.108:7000/enfermedad/${codUE}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           nombre,
-          apellido,
-          tlf,
+
         }),
       })
         .then((response) => response.json())
@@ -49,15 +44,13 @@ const Lista = () => {
         });
     } else {
       // Agregar nuevo contacto
-      fetch('http://192.168.0.108:7000/contacto', {
+      fetch('http://192.168.0.108:7000/enfermedad', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           nombre,
-          apellido,
-          tlf,
           correoUsuario,
         }),
       })
@@ -71,20 +64,16 @@ const Lista = () => {
         });
     }
     // Limpiar campos y cerrar modal
-    setCod(null);
+    setCodUE(null);
     setNombre('');
-    setApellido('');
-    setTlf('');
 
     console.log('Nombre:', nombre);
-    console.log('Apellido:', apellido);
-    console.log('Tlf:', tlf);
     setModalVisible(false);
   };
 
   const getData = async () => {
     try {
-      const response = await fetch(`http://192.168.0.108:7000/contacto?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
+      const response = await fetch(`http://192.168.0.108:7000/enfermedad?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
       const json = await response.json();
       console.log(json);
       setData(json);
@@ -102,29 +91,37 @@ const Lista = () => {
 
   return (
     <View style={(styles.stopError)}>
+      <View style={styles.containerEncabezado}>
+        <Text style={styles.encabezado}>Enfermedades  </Text>
+      <TouchableOpacity style={styles.addContact} onPress={() => {
+                setCodUE(null);
+                setNombre('');
+                setModalVisible(true);
+              }}>
+            <AntDesign name="pluscircleo" size={20} color={("white")} />
+      </TouchableOpacity>
+      </View>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
         <FlatList
           data={data}
-          keyExtractor={({cod}) => cod.toString()}
+          keyExtractor={({codUE}) => codUE.toString()}
           renderItem={({item}) => (
             <View style={styles.container} >
               <Text style={[styles.container]}>
-                <AntDesign name="user" size={30} color={("gray")} />
-                {item.nombre} {item.apellido}   Tlf: {item.tlf}
+                <FontAwesome5 name="virus" size={30} color="gray" />
+                     {item.nombre}
               </Text>
               <TouchableOpacity  onPress={() => {
-                setCod(item.cod);
+                setCodUE(item.codUE);
                 setNombre(item.nombre);
-                setApellido(item.apellido);
-                setTlf(item.tlf);
                 setModalVisible(true);
               }}>
                 <AntDesign name="edit" size={20} color={"gray"} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => {
-                fetch(`http://192.168.0.108:7000/contacto/${item.cod}`, {
+                fetch(`http://192.168.0.108:7000/enfermedad/${item.codUE}`, {
                   method: 'DELETE',
                 })
                   .then((response) => response.json())
@@ -143,15 +140,7 @@ const Lista = () => {
         />
                 
       )}
-          <TouchableOpacity style={styles.addContact} onPress={() => {
-                setCod(null);
-                setNombre('');
-                setApellido('');
-                setTlf('');
-                setModalVisible(true);
-              }}>
-            <AntDesign name="adduser" size={30} color={("white")} />
-           </TouchableOpacity>
+          
 
 
                <Modal
@@ -168,19 +157,6 @@ const Lista = () => {
                          placeholder="Nombre"
                          value={nombre}
                          onChangeText={setNombre}
-                       />
-                       <TextInput
-                         style={styles.input}
-                         placeholder="Apellido"
-                         value={apellido}
-                         onChangeText={setApellido}
-                       />
-                        <TextInput
-                          style={styles.input}
-                          placeholder="Teléfono"
-                          value={tlf}
-                          onChangeText={setTlf}
-                          keyboardType="phone-pad"
                        />
                        <View style={styles.botones}>
                          <Hbuttom sentence='Guardar' onPress={enviarFormulario} />
@@ -206,7 +182,7 @@ stopError: {
 addContact: {
     backgroundColor: '#21239A',
     borderRadius: '100%',
-    padding: 20,
+    padding: 8,
   },
   container: {  
     borderRadius: 10,
@@ -218,7 +194,13 @@ addContact: {
     backgroundColor: 'white',
   },
 
-
+containerEncabezado: {
+  flexDirection:'row', 
+  justifyContent:'space-around', 
+  alignItems:'center', 
+  alignSelf: 'flex-start',
+  marginLeft: 10,
+  },
 
 
   overlay: {
@@ -255,5 +237,11 @@ addContact: {
     justifyContent: 'center',
     alignItems: 'center',
   },
+  encabezado: {
+    fontSize: 30,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
-export default Lista;
+export default ListaEn;

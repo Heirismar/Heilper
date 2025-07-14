@@ -1,29 +1,25 @@
-import Lista from "@/components/Lista";
-import LocationFile from '@/components/LocationFile';
-import { Image } from 'expo-image';
-//import { LinearGradient } from "expo-linear-gradient";
-import { SmsFile } from "@/components/SmsFile";
+import ListaEn from "@/components/ListaEn";
+import ListaUser from "@/components/ListaUser";
 import { useContext } from "react";
 import React from "react";
 import { AuthContext } from '@/app/AuthContext';  
 import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Header from "@/components/ui/Header";
+import { ScrollView } from "react-native";
 const profile= () =>{
     const { correoUsuario } = useContext(AuthContext);
     return(
         <SafeAreaProvider style={styles.frame}>
             <SafeAreaView style={{ flex: 1 }}>
-                <View  style={styles.gradient}>
-                            <View style={styles.container1}>
-                            <Text style={styles.phrase}>Perfil de {correoUsuario}</Text>
-                            </View>
-                            <View style={styles.container2}>
-                                <Image source={require('@/assets/images/logo.png')} style={styles.imagen}/>
-                            </View>
-                            <Lista/>
-                            <LocationFile/>
-                            <SmsFile/>
-                </View>
+                <ScrollView>
+                    <View  style={styles.gradient}>
+                            <Header sentence="Perfil"/>
+                                    <ListaUser/> 
+                                    <ListaEn/>
+                                    <ListaEn/>                                   
+                    </View>
+                </ScrollView>
             </SafeAreaView>
         </SafeAreaProvider>
     );

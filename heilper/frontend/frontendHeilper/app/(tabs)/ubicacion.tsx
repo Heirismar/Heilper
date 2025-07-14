@@ -18,6 +18,7 @@ const ubicacion= () =>{
                                 <Image source={require('@/assets/images/logo.png')} style={styles.imagen}/>
                             </View>
                             <LocationFile/>
+                            <SmsFile/>
                 </View>
             </SafeAreaView>
         </SafeAreaProvider>
