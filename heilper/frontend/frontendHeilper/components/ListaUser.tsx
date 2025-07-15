@@ -52,39 +52,8 @@ const ListaUser = () => {
         .catch((error) => {
           console.error('Error al editar contacto:', error);
         });
-    } else {
-      // Agregar nuevo contacto
-      fetch('http://192.168.0.108:7000/usuario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre,
-          apellido,
-          tlf,
-          direccion,
-          sangre,
-          correoUsuario,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Contacto agregado:', data);
-          getData();
-        })
-        .catch((error) => {
-          console.error('Error al agregar contacto:', error);
-        });
-    }
+    } 
     // Limpiar campos y cerrar modal
-    setCorreo(null);
-    setNombre('');
-    setApellido('');
-    setTlf('');
-    setDireccion('');
-    setSangre('');
-
     console.log('Nombre:', nombre);
     setModalVisible(false);
   };
@@ -93,9 +62,17 @@ const ListaUser = () => {
     try {
       const response = await fetch(`http://192.168.0.108:7000/usuario?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
       const json = await response.json();
+      console.log('Datos obtenidos:', json);
       console.log(json);
       setData(json);
-      
+      if (json.length > 0) {
+        const { nombre, apellido, tlf, direccion, sangre } = json[0];
+        setNombre(nombre);
+        setApellido(apellido);
+        setTlf(tlf);
+        setDireccion(direccion);
+        setSangre(sangre);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -112,12 +89,7 @@ const ListaUser = () => {
       <View style={styles.containerEncabezado}>
         <Text style={styles.encabezado}>Datos Personales  </Text>
           <TouchableOpacity  onPress={() => {
-            setCorreo(correoUsuario);
-            setNombre(nombre);
-            setApellido(apellido);
-            setTlf(tlf);
-            setDireccion(direccion);
-            setSangre(sangre);
+
             setModalVisible(true);
           }}>
             <AntDesign name="edit" size={20} color={"gray"} />
@@ -128,20 +100,17 @@ const ListaUser = () => {
       ) : (
         <FlatList
           data={data}
-          keyExtractor={({correo}) => correo.toString()}
+          keyExtractor={({correo}) => correo}
           renderItem={({item}) => (
             <View style={styles.container} >
               <Text>
-                     {item.nombre} {item.apellido}
+                Nombre: {item.nombre} {item.apellido} {'\n'}
+                Teléfono: {item.tlf} {'\n'}
+                Dirección: {item.direccion} {'\n'}
+                Tipo de Sangre: {item.sangre} {'\n'}
               </Text>
-           
-              <TouchableOpacity  onPress={() => {
-                setCorreo(item.correo);
-                setNombre(item.nombre);
-                setModalVisible(true);
-              }}>
-                <AntDesign name="edit" size={20} color={"gray"} />
-              </TouchableOpacity>
+
+      
             </View>
           )}
         />
@@ -157,7 +126,7 @@ const ListaUser = () => {
                  >
                    <View style={styles.overlay}>
                      <View style={styles.modalView}>
-                       <Text style={styles.titulo}>Contacto</Text>
+                       <Text style={styles.titulo}>Datos Personales</Text>
                        <TextInput
                          style={styles.input}
                          placeholder="Nombre"

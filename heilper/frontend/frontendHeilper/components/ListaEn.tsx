@@ -151,7 +151,7 @@ const ListaEn = () => {
                  >
                    <View style={styles.overlay}>
                      <View style={styles.modalView}>
-                       <Text style={styles.titulo}>Contacto</Text>
+                       <Text style={styles.titulo}>Enfermedad</Text>
                        <TextInput
                          style={styles.input}
                          placeholder="Nombre"

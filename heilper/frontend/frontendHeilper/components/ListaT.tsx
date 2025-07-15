@@ -4,39 +4,39 @@ import { useRouter } from 'expo-router';
 import { AuthContext } from '@/app/AuthContext';
 import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity,TextInput, Button, Modal, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Hbuttom from './ui/Hbuttom';
 
 type Data = {
-    cod: number;
+    codUT: number;
     nombre: string;
-    apellido: string;
-    tlf: string;
-    usuario: string;
+    descripcion: string;
+    duracion: string;
 };
 
-const Lista = () => {
+const ListaT = () => {
   const router = useRouter();
   const { correoUsuario } =useContext(AuthContext);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState<Data[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [cod, setCod] = useState<number | null>(null);
+  const [codUT, setCodUT] = useState<number | null>(null);
   const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
-  const [tlf, setTlf] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [duracion, setDuracion] = useState('');
+
 
   const enviarFormulario = () => {
-    if (cod !== null) {
+    if (codUT !== null) {
       // Editar contacto existente
-      fetch(`http://192.168.0.108:7000/contacto/${cod}`, {
+      fetch(`http://192.168.0.108:7000/tratamiento/${codUT}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           nombre,
-          apellido,
-          tlf,
+          duracion,
         }),
       })
         .then((response) => response.json())
@@ -49,15 +49,14 @@ const Lista = () => {
         });
     } else {
       // Agregar nuevo contacto
-      fetch('http://192.168.0.108:7000/contacto', {
+      fetch('http://192.168.0.108:7000/tratamiento', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           nombre,
-          apellido,
-          tlf,
+          duracion,
           correoUsuario,
         }),
       })
@@ -71,23 +70,27 @@ const Lista = () => {
         });
     }
     // Limpiar campos y cerrar modal
-    setCod(null);
+    setCodUT(null);
     setNombre('');
-    setApellido('');
-    setTlf('');
+    setDescripcion('');
+    setDuracion('');
 
     console.log('Nombre:', nombre);
-    console.log('Apellido:', apellido);
-    console.log('Tlf:', tlf);
     setModalVisible(false);
   };
 
   const getData = async () => {
     try {
-      const response = await fetch(`http://192.168.0.108:7000/contacto?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
+      const response = await fetch(`http://192.168.0.108:7000/tratamiento?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
       const json = await response.json();
       console.log(json);
       setData(json);
+      if (json.length > 0) {
+        const { nombre, descripcion, duracion } = json[0];
+        setNombre(nombre);
+        setDescripcion(descripcion);
+        setDuracion(duracion);
+      }
       
     } catch (error) {
       console.error(error);
@@ -102,29 +105,42 @@ const Lista = () => {
 
   return (
     <View style={(styles.stopError)}>
+      <View style={styles.containerEncabezado}>
+        <Text style={styles.encabezado}>Tratamientos  </Text>
+      <TouchableOpacity style={styles.addContact} onPress={() => {
+                setCodUT(null);
+                setNombre('');
+                setDuracion('');
+                setModalVisible(true);
+              }}>
+            <AntDesign name="pluscircleo" size={20} color={("white")} />
+      </TouchableOpacity>
+      </View>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
         <FlatList
           data={data}
-          keyExtractor={({cod}) => cod.toString()}
+          keyExtractor={({codUT}) => codUT.toString()}
           renderItem={({item}) => (
             <View style={styles.container} >
               <Text style={[styles.container]}>
-                <AntDesign name="user" size={30} color={("gray")} />
-                {item.nombre} {item.apellido}   Tlf: {item.tlf}
+                <AntDesign name="medicinebox" size={30} color="gray" /> {'\n'}
+                    Nombre: {item.nombre} {'\n'}
+                    Duración: {item.duracion} {'\n'}
+                    Descripción: {item.descripcion} {'\n'}
               </Text>
               <TouchableOpacity  onPress={() => {
-                setCod(item.cod);
+                setCodUT(item.codUT);
                 setNombre(item.nombre);
-                setApellido(item.apellido);
-                setTlf(item.tlf);
+                setDescripcion(item.descripcion);
+                setDuracion(item.duracion);
                 setModalVisible(true);
               }}>
                 <AntDesign name="edit" size={20} color={"gray"} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => {
-                fetch(`http://192.168.0.108:7000/contacto/${item.cod}`, {
+                fetch(`http://192.168.0.108:7000/tratamiento/${item.codUT}`, {
                   method: 'DELETE',
                 })
                   .then((response) => response.json())
@@ -143,15 +159,7 @@ const Lista = () => {
         />
                 
       )}
-          <TouchableOpacity style={styles.addContact} onPress={() => {
-                setCod(null);
-                setNombre('');
-                setApellido('');
-                setTlf('');
-                setModalVisible(true);
-              }}>
-            <AntDesign name="adduser" size={30} color={("white")} />
-           </TouchableOpacity>
+          
 
 
                <Modal
@@ -162,7 +170,7 @@ const Lista = () => {
                  >
                    <View style={styles.overlay}>
                      <View style={styles.modalView}>
-                       <Text style={styles.titulo}>Contacto</Text>
+                       <Text style={styles.titulo}>Tratamientos</Text>
                        <TextInput
                          style={styles.input}
                          placeholder="Nombre"
@@ -171,16 +179,9 @@ const Lista = () => {
                        />
                        <TextInput
                          style={styles.input}
-                         placeholder="Apellido"
-                         value={apellido}
-                         onChangeText={setApellido}
-                       />
-                        <TextInput
-                          style={styles.input}
-                          placeholder="Teléfono"
-                          value={tlf}
-                          onChangeText={setTlf}
-                          keyboardType="phone-pad"
+                         placeholder="Duración"
+                         value={duracion}
+                         onChangeText={setDuracion}
                        />
                        <View style={styles.botones}>
                          <Hbuttom sentence='Guardar' onPress={enviarFormulario} />
@@ -206,7 +207,7 @@ stopError: {
 addContact: {
     backgroundColor: '#21239A',
     borderRadius: '100%',
-    padding: 20,
+    padding: 8,
   },
   container: {  
     borderRadius: 10,
@@ -218,7 +219,13 @@ addContact: {
     backgroundColor: 'white',
   },
 
-
+containerEncabezado: {
+  flexDirection:'row', 
+  justifyContent:'space-around', 
+  alignItems:'center', 
+  alignSelf: 'flex-start',
+  marginLeft: 10,
+  },
 
 
   overlay: {
@@ -255,5 +262,11 @@ addContact: {
     justifyContent: 'center',
     alignItems: 'center',
   },
+  encabezado: {
+    fontSize: 30,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
-export default Lista;
+export default ListaT;

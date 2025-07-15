@@ -1,4 +1,5 @@
 import ListaEn from "@/components/ListaEn";
+import ListaT from "@/components/ListaT";
 import ListaUser from "@/components/ListaUser";
 import { useContext } from "react";
 import React from "react";
@@ -17,7 +18,7 @@ const profile= () =>{
                             <Header sentence="Perfil"/>
                                     <ListaUser/> 
                                     <ListaEn/>
-                                    <ListaEn/>                                   
+                                    <ListaT/>                                   
                     </View>
                 </ScrollView>
             </SafeAreaView>

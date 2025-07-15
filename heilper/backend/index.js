@@ -157,23 +157,15 @@ app.delete("/enfermedad/:cod", (req, res) => {
 // USUARIO
 app.get("/usuario", (req, res) => {
     const { correoUsuario } = req.query;
-    const sql = "SELECT (nombre, apellido, sangre,tlf, direccion) FROM usuario WHERE correo = ?";
+    const sql = "SELECT nombre, apellido, sangre,tlf, direccion FROM usuario WHERE correo = ?";
     con.query(sql, [correoUsuario], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(result);
     });
 });
-// POST nuevo usuario
-app.post("/usuario", (req, res) => {
-    const { nombre, apellido, tlf, direccion, sangre, correoUsuario } = req.body;
-    const sql = `INSERT INTO usuario (nombre, apellido, tlf, direccion, sangre, correo) VALUES (?, ?, ?, ?, ?, ?)`;
-    con.query(sql, [nombre, apellido, tlf, direccion, sangre, correoUsuario], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ success: true, message: 'Usuario agregado', result });
-    });
-});
+
 // PUT editar usuario
-app.put("/usuario/:correo", (req, res) => {
+app.put("/usuario/:correoUsuario", (req, res) => {
     const correoUsuario = req.params.correoUsuario;
     const { nombre, apellido, tlf, direccion, sangre } = req.body;
     const sql = `UPDATE usuario SET nombre = ?, apellido = ?, tlf = ?, direccion = ?, sangre = ? WHERE correo = ?`;
@@ -182,16 +174,79 @@ app.put("/usuario/:correo", (req, res) => {
         res.json({ success: true, message: 'Usuario actualizado', result });
     }); 
 });
-// DELETE usuario
-app.delete("/usuario/:correo", (req, res) => {
-    const correo = req.params.correo;
-    const sql = `DELETE FROM usuario WHERE correo = ?`;
-    con.query(sql, [correo], (err, result) => {
+
+//Tratamiento
+app.get("/tratamiento", (req, res) => {
+    const { correoUsuario } = req.query;
+    const sql =" select tratamiento.nombre as  nombre, usuariotratamiento.cod as codUT, tratamiento.descripcion as descripcion, usuariotratamiento.duracion as duracion from (usuariotratamiento inner join tratamiento on usuariotratamiento.tratamiento=tratamiento.cod) where usuario = ?";
+    con.query(sql, [correoUsuario], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(result);
     });
-
 });
+// POST nuevo tratamiento
+app.post("/tratamiento", (req, res) => {
+    const { nombre,duracion, correoUsuario } = req.body;
+    const extraerCod=`select cod from tratamiento where nombre=?`
+    con.query(extraerCod, [nombre], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (result.length > 0) {
+            // Si el tratamiento ya existe, solo se agrega la relación con el usuario
+            const sql = `INSERT INTO usuariotratamiento (tratamiento,duracion, usuario) VALUES (?, ?, ?)`;
+            con.query(sql, [result[0].cod, duracion, correoUsuario], (err, result) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ success: true, message: 'Tratamiento agregado', result });
+            });
+        } else {
+            // Si el tratamiento no existe, se agrega primero y luego se agrega la relación con el usuario
+            const sql = `INSERT INTO tratamiento (nombre) VALUES (?)`;
+            con.query(sql, [nombre], (err, result) => {
+                if (err) return res.status(500).json({ error: err.message });
+                const sql = `INSERT INTO usuariotratamiento (tratamiento, duracion, usuario) VALUES (?, ?, ?)`;
+                con.query(sql, [result.insertId, duracion, correoUsuario], (err, result) => {
+                    if (err) return res.status(500).json({ error: err.message });
+                    res.json({ success: true, message: 'Tratamiento agregado', result });
+                });
+            });
+        }
+    });    
+});
+// PUT editar tratamiento
+app.put("/tratamiento/:cod", (req, res) => {
+    const codUT = req.params.cod;
+    const { nombre, duracion } = req.body;
+    const extraerCod=`select cod from tratamiento where nombre=?`
+    con.query(extraerCod, [nombre], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (result.length > 0) {
+            const sql = `UPDATE usuariotratamiento SET tratamiento = ?, duracion = ? WHERE cod = ?`;
+            con.query(sql, [result[0].cod, duracion,  codUT], (err, result) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({ success: true, message: 'Tratamiento actualizado', result });
+            });
+        } else {
+            const sql = `INSERT INTO tratamiento (nombre) VALUES (?)`;
+            con.query(sql, [nombre], (err, result) => {
+                if (err) return res.status(500).json({ error: err.message });
+                const sql = `UPDATE usuariotratamiento SET tratamiento = ?, duracion = ? WHERE cod = ?`;
+                con.query(sql, [result.insertId, duracion, codUT], (err, result) => {
+                    if (err) return res.status(500).json({ error: err.message });
+                    res.json({ success: true, message: 'Tratamiento actualizado', result });
+                });
+            });
+        }
+    });
+});
+// DELETE tratamiento
+app.delete("/tratamiento/:cod", (req, res) => {
+    const codUT = req.params.cod;
+    const sql = `DELETE FROM usuariotratamiento WHERE cod = ?`;
+    con.query(sql, [codUT], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
 //Servidor en el puerto 7000
 app.listen(7000, () => console.log("Servidor en http://192.168.0.110:7000"));
 
