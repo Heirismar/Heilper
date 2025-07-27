@@ -5,6 +5,7 @@ import { AuthContext } from '@/app/AuthContext';
 import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity,TextInput, Button, Modal, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Hbuttom from './ui/Hbuttom';
+import {ip} from "../app/DireccionIp"
 
 type Data = {
     cod: number;
@@ -28,7 +29,7 @@ const Lista = () => {
   const enviarFormulario = () => {
     if (cod !== null) {
       // Editar contacto existente
-      fetch(`http://192.168.0.108:7000/contacto/${cod}`, {
+      fetch(`http://${ip}:7000/contacto/${cod}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +50,7 @@ const Lista = () => {
         });
     } else {
       // Agregar nuevo contacto
-      fetch('http://192.168.0.108:7000/contacto', {
+      fetch(`http://${ip}:7000/contacto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +85,7 @@ const Lista = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch(`http://192.168.0.108:7000/contacto?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
+      const response = await fetch(`http://${ip}:7000/contacto?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
       const json = await response.json();
       console.log(json);
       setData(json);
@@ -124,7 +125,7 @@ const Lista = () => {
                 <AntDesign name="edit" size={20} color={"gray"} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => {
-                fetch(`http://192.168.0.108:7000/contacto/${item.cod}`, {
+                fetch(`http://${ip}:7000/contacto/${item.cod}`, {
                   method: 'DELETE',
                 })
                   .then((response) => response.json())

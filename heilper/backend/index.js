@@ -164,6 +164,16 @@ app.get("/usuario", (req, res) => {
     });
 });
 
+//SMS
+app.get("/smsContacto", (req, res) => {
+    const { correoUsuario } = req.query;
+    const sql = "SELECT tlf FROM contacto WHERE usuario = ?";
+    con.query(sql, [correoUsuario], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result);
+    });
+});
+
 // PUT editar usuario
 app.put("/usuario/:correoUsuario", (req, res) => {
     const correoUsuario = req.params.correoUsuario;

@@ -5,6 +5,7 @@ import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity,TextInput, Bu
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Hbuttom from './ui/Hbuttom';
+import {ip} from "../app/DireccionIp"
 
 type Data = {
     correo: string;
@@ -31,7 +32,7 @@ const ListaUser = () => {
   const enviarFormulario = () => {
     if (correo !== null) {
       // Editar contacto existente
-      fetch(`http://192.168.0.108:7000/usuario/${correoUsuario}`, {
+      fetch(`http://${ip}:7000/usuario/${correoUsuario}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ const ListaUser = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch(`http://192.168.0.108:7000/usuario?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
+      const response = await fetch(`http://${ip}:7000/usuario?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
       const json = await response.json();
       console.log('Datos obtenidos:', json);
       console.log(json);

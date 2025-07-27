@@ -6,6 +6,7 @@ import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity,TextInput, Bu
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Hbuttom from './ui/Hbuttom';
+import {ip} from "../app/DireccionIp"
 
 type Data = {
     codUT: number;
@@ -29,7 +30,7 @@ const ListaT = () => {
   const enviarFormulario = () => {
     if (codUT !== null) {
       // Editar contacto existente
-      fetch(`http://192.168.0.108:7000/tratamiento/${codUT}`, {
+      fetch(`http://${ip}:7000/tratamiento/${codUT}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +50,7 @@ const ListaT = () => {
         });
     } else {
       // Agregar nuevo contacto
-      fetch('http://192.168.0.108:7000/tratamiento', {
+      fetch(`http://${ip}:7000/tratamiento`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +82,7 @@ const ListaT = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch(`http://192.168.0.108:7000/tratamiento?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
+      const response = await fetch(`http://${ip}:7000/tratamiento?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
       const json = await response.json();
       console.log(json);
       setData(json);
@@ -140,7 +141,7 @@ const ListaT = () => {
                 <AntDesign name="edit" size={20} color={"gray"} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => {
-                fetch(`http://192.168.0.108:7000/tratamiento/${item.codUT}`, {
+                fetch(`http://${ip}:7000/tratamiento/${item.codUT}`, {
                   method: 'DELETE',
                 })
                   .then((response) => response.json())

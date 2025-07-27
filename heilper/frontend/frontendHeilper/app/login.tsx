@@ -7,6 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from 'expo-router';
 import { AuthContext } from '@/app/AuthContext';
 import Hbutton from '@/components/ui/Hbuttom';
+import {ip} from "@/app/DireccionIp";
 
 export default function TabTwoScreen() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function TabTwoScreen() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://192.168.0.108:7000/login', {
+      const response = await fetch(`http://${ip}:7000/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo, password }),

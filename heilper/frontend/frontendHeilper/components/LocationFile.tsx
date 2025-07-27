@@ -1,30 +1,30 @@
 import * as Linking from 'expo-linking';
 import { useEffect, useState } from 'react';
 import { Button, Platform, StyleSheet, View } from 'react-native';
-/* @hide */
 import * as Device from 'expo-device';
-/* @end */
 import * as Location from 'expo-location';
 
+export let urlSms: string | null = null; // Variable global para almacenar la URL
 
-export let urlSms: string | null = null; // Variable para almacenar la URL
 export default function LocationFile() {
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [url, setUrl] = useState<string>(""); // URL interna para abrir mapas
+  const [text, setText] = useState<Location.LocationObject>({} as Location.LocationObject); // Objeto con ubicación
+  const [location, setLocation] = useState<Location.LocationObject | null>(null); // Objeto crudo de ubicación
+  const [errorMsg, setErrorMsg] = useState<string | null>(null); // Errores
 
+  // Solicita la ubicación una sola vez al montar el componente
   useEffect(() => {
     async function getCurrentLocation() {
-      /* @hide */
       if (Platform.OS === 'android' && !Device.isDevice) {
         setErrorMsg(
-          'Oops, this will not work on Snack in an Android Emulator. Try it on your device!'
+          'Oops, esto no funciona en emulador Android de Snack. ¡Pruébalo en un dispositivo real!'
         );
         return;
       }
-      /* @end */
+
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        setErrorMsg('Permiso denegado para acceder a la ubicación');
         return;
       }
 
@@ -35,38 +35,41 @@ export default function LocationFile() {
     getCurrentLocation();
   }, []);
 
-  let text = 'Waiting...';
-  let lgt;
-  let lat;
-  let url: string | null = null; // Variable para almacenar la URL;
-  let label='Ubicación Actual';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.parse(JSON.stringify(location));
-     lgt=text.coords.longitude;
-     lat=text.coords.latitude;
-     
-  }
+  // Cuando se obtiene la ubicación, genera la URL y el texto
+  useEffect(() => {
+    if (location) {
+      const label = 'Ubicación Actual';
+      const parsed = JSON.parse(JSON.stringify(location)); // opcional
+      setText(parsed);
 
-  // Crear URL para Google Maps
-  url = Platform.select({
-    ios: `maps:0,0?q=${label}@${lat},${lgt}`,
-    android: `geo:${lat},${lgt}?q=${lat},${lgt}(${label})`,
-  });
+      const lat = parsed.coords.latitude;
+      const lgt = parsed.coords.longitude;
 
-// URL enviada para visualizar ubicación actual en Google Maps en el navegador 
-  urlSms=  `https://www.google.com/maps/search/?api=1&query=${lat},${lgt}`;
+      const aux = Platform.select({
+        ios: `maps:0,0?q=${label}@${lat},${lgt}`,
+        android: `geo:${lat},${lgt}?q=${lat},${lgt}(${label})`,
+      });
 
+      if (aux) {
+        setUrl(aux);
+      }
+
+      // URL para compartir por mensaje o navegador
+      urlSms = `https://www.google.com/maps/search/?api=1&query=${lat},${lgt}`;
+    }
+  }, [location]);
+
+  // Abre Google Maps usando Linking
   const openMapWithCurrentLocation = async () => {
-    // Abrir Google Maps
-    Linking.openURL(url);
+    if (url) {
+      Linking.openURL(url);
+    }
   };
-  
+
   return (
     <View style={styles.container}>
-       <Button title="Abrir mi ubicación en el mapa" onPress={openMapWithCurrentLocation} />
-    </View>//colocar {text} como texto mostrará todas las propiedades obtenidas de location
+      <Button title="Abrir mi ubicación en el mapa" onPress={openMapWithCurrentLocation} />
+    </View>
   );
 }
 
@@ -76,10 +79,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-  },
-  paragraph: {
-    fontSize: 18,
-    textAlign: 'center',
-    color:'red',
   },
 });

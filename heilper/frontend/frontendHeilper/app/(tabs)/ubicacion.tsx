@@ -1,30 +1,28 @@
 import Lista from "@/components/Lista";
-import LocationFile from '@/components/LocationFile';
 import { Image } from 'expo-image';
 //import { LinearGradient } from "expo-linear-gradient";
 import { SmsFile } from "@/components/SmsFile";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import Header from "@/components/ui/Header";
 const ubicacion= () =>{
     return(
         <SafeAreaProvider style={styles.frame}>
             <SafeAreaView style={{ flex: 1 }}>
                 <View  style={styles.gradient}>
-                            <View style={styles.container1}>
-                                
-                            </View>
-                            <View style={styles.container2}>
-                                <Image source={require('@/assets/images/logo.png')} style={styles.imagen}/>
-                            </View>
-                            <LocationFile/>
-                            <SmsFile/>
+                    <Header sentence="Ubicación"/>
+                    <Text style={{alignSelf:'center'}}>
+                        Envía tu ubicación actual y tu información médica a tus contactos en caso de emergencia.
+                    </Text>
+                    <SmsFile/>
                 </View>
             </SafeAreaView>
         </SafeAreaProvider>
     );
 }
 
+ 
 const styles=StyleSheet.create({
     frame:{
         display:'flex',
