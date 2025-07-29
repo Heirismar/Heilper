@@ -27,7 +27,6 @@ export default function TabTwoScreen() {
 
       if (data.success) {
         setCorreoUsuario(data.correo);
-        Alert.alert('Login exitoso', `Bienvenido: ${data.correo}`);
         router.replace('/(tabs)'); // Redirigir a la pantalla principal
         // puedes navegar a la pantalla principal aquí
       } else {
@@ -57,8 +56,8 @@ export default function TabTwoScreen() {
                             <Hbutton sentence="Iniciar Sesión" onPress={handleLogin} />
                             <View style={{ marginTop: 5, flexDirection: 'row' }}>
                               <Text style={{ marginTop: 5, color: '#fff' }}>¿No tienes cuenta? </Text>
-                              <TouchableOpacity >
-                                  <Link href="/register" style={styles.register}>Regístrate</Link>
+                              <TouchableOpacity  onPress={() => router.push('/register')}>
+                                  <Text style={styles.register}>Regístrate</Text>
                               </TouchableOpacity>
                             </View>
                 </LinearGradient>

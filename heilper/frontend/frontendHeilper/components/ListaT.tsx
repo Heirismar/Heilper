@@ -125,36 +125,38 @@ const ListaT = () => {
           keyExtractor={({codUT}) => codUT.toString()}
           renderItem={({item}) => (
             <View style={styles.container} >
-              <Text style={[styles.container]}>
-                <AntDesign name="medicinebox" size={30} color="gray" /> {'\n'}
+              <Text style={styles.descripcion}>
+                <AntDesign name="medicinebox" size={30} color="white" /> {'\n'}
                     Nombre: {item.nombre} {'\n'}
                     Duración: {item.duracion} {'\n'}
                     Descripción: {item.descripcion} {'\n'}
               </Text>
-              <TouchableOpacity  onPress={() => {
-                setCodUT(item.codUT);
-                setNombre(item.nombre);
-                setDescripcion(item.descripcion);
-                setDuracion(item.duracion);
-                setModalVisible(true);
-              }}>
-                <AntDesign name="edit" size={20} color={"gray"} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                fetch(`http://${ip}:7000/tratamiento/${item.codUT}`, {
-                  method: 'DELETE',
-                })
-                  .then((response) => response.json())
-                  .then((data) => {
-                    console.log('Contacto eliminado:', data);
-                    getData();
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity  onPress={() => {
+                  setCodUT(item.codUT);
+                  setNombre(item.nombre);
+                  setDescripcion(item.descripcion);
+                  setDuracion(item.duracion);
+                  setModalVisible(true);
+                }}>
+                  <AntDesign name="edit" size={20} color={"white"} />
+                </TouchableOpacity>
+                <TouchableOpacity style={{marginLeft: 5}} onPress={() => {
+                  fetch(`http://${ip}:7000/tratamiento/${item.codUT}`, {
+                    method: 'DELETE',
                   })
-                  .catch((error) => {
-                    console.error('Error al eliminar contacto:', error);
-                  });
-              }}>
-                <AntDesign name="delete" size={20} color={"gray"} />
-              </TouchableOpacity>
+                    .then((response) => response.json())
+                    .then((data) => {
+                      console.log('Contacto eliminado:', data);
+                      getData();
+                    })
+                    .catch((error) => {
+                      console.error('Error al eliminar contacto:', error);
+                    });
+                }}>
+                  <AntDesign name="delete" size={20} color={"white"} />
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
@@ -206,18 +208,20 @@ stopError: {
   padding: 0,
 },
 addContact: {
-    backgroundColor: '#21239A',
+    backgroundColor: '#4C0049',
     borderRadius: '100%',
     padding: 8,
   },
   container: {  
     borderRadius: 10,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     margin:10,
     padding: 10,
+    width:360,
     color: 'black',
     fontWeight: 'bold',
-    backgroundColor: 'white',
+    backgroundColor: '#3e1d8ce4',
   },
 
 containerEncabezado: {
@@ -268,6 +272,16 @@ containerEncabezado: {
     marginBottom: 10,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  descripcion:{
+    marginLeft:15,
+    marginTop:10,
+    borderRadius: 10,
+    color:'white',
+    shadowColor: '#000',
+    fontSize: 14,
+    fontWeight: 'bold',
+    fontFamily: 'Poppins_600SemiBold',
   },
 });
 export default ListaT;

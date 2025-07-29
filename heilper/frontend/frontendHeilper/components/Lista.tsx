@@ -110,35 +110,41 @@ const Lista = () => {
           data={data}
           keyExtractor={({cod}) => cod.toString()}
           renderItem={({item}) => (
-            <View style={styles.container} >
-              <Text style={[styles.container]}>
-                <AntDesign name="user" size={30} color={("gray")} />
-                {item.nombre} {item.apellido}   Tlf: {item.tlf}
-              </Text>
-              <TouchableOpacity  onPress={() => {
-                setCod(item.cod);
-                setNombre(item.nombre);
-                setApellido(item.apellido);
-                setTlf(item.tlf);
-                setModalVisible(true);
-              }}>
-                <AntDesign name="edit" size={20} color={"gray"} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                fetch(`http://${ip}:7000/contacto/${item.cod}`, {
-                  method: 'DELETE',
-                })
-                  .then((response) => response.json())
-                  .then((data) => {
-                    console.log('Contacto eliminado:', data);
-                    getData();
-                  })
-                  .catch((error) => {
-                    console.error('Error al eliminar contacto:', error);
-                  });
-              }}>
-                <AntDesign name="delete" size={20} color={"gray"} />
-              </TouchableOpacity>
+            <View style={{flexDirection:'row', width:360}}>
+              <View style={styles.icono}>
+                <AntDesign name="user" size={30} color={("white")} />
+              </View>
+              <View style={styles.container} > 
+                <Text style={styles.descripcion}>
+                  {item.nombre} {item.apellido}  Tlf: {item.tlf}
+                </Text>
+                <View  style={{flexDirection:'row', marginLeft:5}}>
+                  <TouchableOpacity  onPress={() => {
+                    setCod(item.cod);
+                    setNombre(item.nombre);
+                    setApellido(item.apellido);
+                    setTlf(item.tlf);
+                    setModalVisible(true);
+                  }}>
+                    <AntDesign name="edit" size={20} color={"white"} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{marginLeft:5}} onPress={() => {
+                    fetch(`http://${ip}:7000/contacto/${item.cod}`, {
+                      method: 'DELETE',
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        console.log('Contacto eliminado:', data);
+                        getData();
+                      })
+                      .catch((error) => {
+                        console.error('Error al eliminar contacto:', error);
+                      });
+                  }}>
+                    <AntDesign name="delete" size={20} color={"white"} />
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           )}
         />
@@ -205,7 +211,8 @@ stopError: {
   padding: 0,
 },
 addContact: {
-    backgroundColor: '#21239A',
+    marginTop: 20,
+    backgroundColor: '#4C0049',
     borderRadius: '100%',
     padding: 20,
   },
@@ -216,7 +223,7 @@ addContact: {
     padding: 10,
     color: 'black',
     fontWeight: 'bold',
-    backgroundColor: 'white',
+    backgroundColor: '#442294e4',
   },
 
 
@@ -255,6 +262,24 @@ addContact: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  icono:{
+    backgroundColor: '#4C0049',
+    width: 50,
+    height: 50,
+    borderRadius: '100%',
+    padding: 10,
+    margin:10,
+    marginLeft:0,
+  },
+    descripcion:{
+    margin:10,
+    borderRadius: 10,
+    color:'white',
+    shadowColor: '#000',
+    fontSize: 13,
+    fontWeight: 'bold',
+    fontFamily: 'Poppins_600SemiBold',
   },
 });
 export default Lista;

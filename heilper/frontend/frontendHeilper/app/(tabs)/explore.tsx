@@ -31,7 +31,7 @@ const styles=StyleSheet.create({
         flex:1,
         alignItems:'flex-start',
         justifyContent:'flex-start',
-        backgroundColor:'lightblue',
+        backgroundColor:'#f6f3f7ff',
     },
 });
 

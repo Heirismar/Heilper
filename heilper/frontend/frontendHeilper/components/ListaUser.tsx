@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { AuthContext } from '@/app/AuthContext';
 import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity,TextInput, Button, Modal, Text, View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { LinearGradient } from "expo-linear-gradient";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Hbuttom from './ui/Hbuttom';
 import {ip} from "../app/DireccionIp"
@@ -93,7 +94,7 @@ const ListaUser = () => {
 
             setModalVisible(true);
           }}>
-            <AntDesign name="edit" size={20} color={"gray"} />
+            <AntDesign name="edit" size={30} color={"#4C0049"} />
           </TouchableOpacity>
       </View>
       {isLoading ? (
@@ -103,15 +104,34 @@ const ListaUser = () => {
           data={data}
           keyExtractor={({correo}) => correo}
           renderItem={({item}) => (
-            <View style={styles.container} >
-              <Text>
-                Nombre: {item.nombre} {item.apellido} {'\n'}
-                Teléfono: {item.tlf} {'\n'}
-                Dirección: {item.direccion} {'\n'}
-                Tipo de Sangre: {item.sangre} {'\n'}
-              </Text>
+            <View >
+               <LinearGradient  colors={['#21239A', '#4C0049']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.container} >
+                <Text style={styles.subtitulo}>
+                  {item.nombre} {item.apellido}
+                </Text>
+                <Text style={styles.descripcion}>
+                  Teléfono
+                </Text>
+                <Text style={styles.subtitulo}>
+                  {item.tlf}
+                </Text>
+                <Text style={styles.descripcion}>
+                  Dirección
+                </Text>
+                  <Text style={styles.subtitulo}>
+                  {item.direccion}
+                </Text>
+                <Text style={styles.descripcion}>
+                  Tipo de Sangre
+                </Text>
+                <Text style={styles.subtitulo}>
+                {item.sangre}
+                </Text>
 
-      
+              </LinearGradient>
             </View>
           )}
         />
@@ -164,7 +184,7 @@ const ListaUser = () => {
                        </View>
                      </View>
                    </View>
-                 </Modal>
+              </Modal>
     </View>
     
   );
@@ -185,13 +205,14 @@ addContact: {
     padding: 20,
   },
   container: {  
-    borderRadius: 10,
-    flexDirection: 'row',
+    borderRadius: 20,
+    flexDirection: 'column',
     margin:10,
+    width:360,
     padding: 10,
-    color: 'black',
+    color: '#ffffffff',
     fontWeight: 'bold',
-    backgroundColor: 'white',
+    backgroundColor: '#442294e4',
   },
   containerEncabezado: {
   flexDirection:'row', 
@@ -241,6 +262,21 @@ encabezado: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  subtitulo:{
+    marginTop: 5,
+    marginLeft:10,
+    color:'white',
+    fontSize: 25,
+    fontWeight:'bold',
+    fontFamily: 'Poppins_600SemiBold',
+  },
+    descripcion:{
+    marginLeft:5,
+    marginTop: 20,
+    color:'white',
+    fontSize: 14,
+    fontFamily: 'Poppins_600SemiBold',
   },
 });
 export default ListaUser;

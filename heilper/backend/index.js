@@ -38,6 +38,18 @@ app.post('/login', (req, res) => {
 });
 
 
+
+// Ruta de registro
+app.post('/registro', (req, res) => {
+  const { correo,nombre, apellido, sangre, tlf, direccion, password } = req.body;
+
+  const sql = 'INSERT INTO usuario (correo, nombre, apellido, sangre, tlf, direccion, password) VALUES (?, ?, ?, ?, ?, ?, ?)';
+  con.query(sql, [correo,nombre, apellido, sangre, tlf, direccion, password], (err, results) => {
+    if (err) return res.status(500).send({ success: false, error: err.message });
+    res.send({ success: true, message: 'Registro exitoso' });
+  });
+});
+
 //CONTACTO
 app.get("/contacto", (req, res) => {
     const { correoUsuario } = req.query;

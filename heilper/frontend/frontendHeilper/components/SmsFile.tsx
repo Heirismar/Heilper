@@ -24,6 +24,11 @@ type contactos = {
     tlf: string;
 };
 
+type enfermedad = {
+    codUE: number;
+    nombre: string;
+};
+
 let urlSms: string | null = null; // Variable global para almacenar la URL
 export const SmsFile = () => {
   const [isLoading, setLoading] = useState(true);
@@ -34,6 +39,7 @@ export const SmsFile = () => {
   const [sangre, setSangre] = useState('');
   const { correoUsuario } = useContext(AuthContext);
   const [data, setData] = useState<usuario[]>([]);
+  const [dataEnfermedad, setDataEnfermedad] = useState<enfermedad[]>([]);
   const [dataContacto, setDataContacto] = useState<usuario[]>([]);
   const [smsAvailable, setSmsAvailable] = useState(false);
 
@@ -145,6 +151,25 @@ export const SmsFile = () => {
         setLoading(false);
       }
     };
+
+    const getDataEnfermedad = async () => {
+      try {
+        const response = await fetch(`http://${ip}:7000/enfermedad?correoUsuario=${encodeURIComponent(correoUsuario ?? '')}`);
+        const json = await response.json();
+        console.log(json);
+        setDataEnfermedad(json);
+        
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      getDataEnfermedad();
+    }, []);
+  
   
     useEffect(() => {
       getDataContacto();
@@ -163,11 +188,12 @@ export const SmsFile = () => {
   }, [data]);
 
   const sendSMS = async () => {
+    const enfermedades = dataEnfermedad.map(e => e.nombre).join(", ");
     const response = await userContacts();
     const contactos = response.map((contacto: contactos) => contacto.tlf);
     const { result } = await SMS.sendSMSAsync(
       contactos,
-      `${nombre}, ${apellido} con el telefono ${tlf} y la direccion ${direccion} con sangre ${sangre} esta es mi ubicación actual: ${urlSms}`,
+      `Soy ${nombre} ${apellido}, mi tipo de sangre es ${sangre}, padezco de ${enfermedades} y esta es mi ubicación actual: ${urlSms}`,
     );
   };
 

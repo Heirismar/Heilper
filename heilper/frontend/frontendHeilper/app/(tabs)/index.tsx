@@ -80,8 +80,8 @@ export default function HomeScreen() {
     <SafeAreaProvider style={styles.frame}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
+         <Header sentence="Primeros auxilios" />
           <View style={styles.gradient}>
-            <Header sentence="Primeros auxilios" />
 
             <Collapsible title="Asfixia">
               {renderPasos(pasosPrimerosAuxilios.asfixia)}
@@ -115,23 +115,31 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   frame: {
-    display:'flex',
-    flexDirection: 'column',
+    flex: 1,
+    backgroundColor: '#f6f3f7ff', // fondo más suave para que resalte el contenido
   },
   gradient: {
-    display:'flex',
-    flex:1,
-    alignItems:'flex-start',
-    justifyContent:'flex-start',
-    backgroundColor:'lightblue',
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    backgroundColor: '#f6f3f7ff',
   },
   stepContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    marginVertical: 10,
+    marginHorizontal: 5,
+    backgroundColor: '#3e1d8ce4', // violeta oscuro translúcido como en ListaEn
+    padding: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   stepText: {
     fontSize: 16,
-    marginBottom: 6,
-    color: '#333',
+    color: 'white',
+    marginBottom: 8,
+    fontWeight: '500',
+    fontFamily: 'Poppins_400Regular', // opcional si usas fuentes Google
   },
 });

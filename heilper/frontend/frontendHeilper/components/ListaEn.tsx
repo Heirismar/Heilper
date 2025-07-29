@@ -110,32 +110,36 @@ const ListaEn = () => {
           keyExtractor={({codUE}) => codUE.toString()}
           renderItem={({item}) => (
             <View style={styles.container} >
-              <Text style={[styles.container]}>
-                <FontAwesome5 name="virus" size={30} color="gray" />
+              <Text >
+                <FontAwesome5 name="virus" size={30} color="white" />
+              </Text>
+              <Text style={styles.descripcion}>
                      {item.nombre}
               </Text>
-              <TouchableOpacity  onPress={() => {
-                setCodUE(item.codUE);
-                setNombre(item.nombre);
-                setModalVisible(true);
-              }}>
-                <AntDesign name="edit" size={20} color={"gray"} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                fetch(`http://${ip}:7000/enfermedad/${item.codUE}`, {
-                  method: 'DELETE',
-                })
-                  .then((response) => response.json())
-                  .then((data) => {
-                    console.log('Contacto eliminado:', data);
-                    getData();
+              <View style={styles.cajon}>
+                <TouchableOpacity  onPress={() => {
+                  setCodUE(item.codUE);
+                  setNombre(item.nombre);
+                  setModalVisible(true);
+                }}>
+                  <AntDesign name="edit" size={20} color={"white"} />
+                </TouchableOpacity>
+                <TouchableOpacity style={{marginLeft: 5}} onPress={() => {
+                  fetch(`http://${ip}:7000/enfermedad/${item.codUE}`, {
+                    method: 'DELETE',
                   })
-                  .catch((error) => {
-                    console.error('Error al eliminar contacto:', error);
-                  });
-              }}>
-                <AntDesign name="delete" size={20} color={"gray"} />
-              </TouchableOpacity>
+                    .then((response) => response.json())
+                    .then((data) => {
+                      console.log('Contacto eliminado:', data);
+                      getData();
+                    })
+                    .catch((error) => {
+                      console.error('Error al eliminar contacto:', error);
+                    });
+                }}>
+                  <AntDesign name="delete" size={20} color={"white"} />
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
@@ -181,18 +185,21 @@ stopError: {
   padding: 0,
 },
 addContact: {
-    backgroundColor: '#21239A',
+    backgroundColor: '#4C0049',
     borderRadius: '100%',
     padding: 8,
   },
   container: {  
     borderRadius: 10,
     flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     margin:10,
     padding: 10,
+    width:360,
     color: 'black',
     fontWeight: 'bold',
-    backgroundColor: 'white',
+    backgroundColor: '#3e1d8ce4',
   },
 
 containerEncabezado: {
@@ -244,5 +251,19 @@ containerEncabezado: {
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  descripcion:{
+    marginLeft:20,
+    borderRadius: 10,
+    color:'white',
+    shadowColor: '#000',
+    fontSize: 20,
+    fontWeight: 'bold',
+    fontFamily: 'Poppins_600SemiBold',
+  },
+  cajon:{
+    flexDirection:'row', 
+    alignItems:'center', 
+    marginLeft: 20,
+  }
 });
 export default ListaEn;
